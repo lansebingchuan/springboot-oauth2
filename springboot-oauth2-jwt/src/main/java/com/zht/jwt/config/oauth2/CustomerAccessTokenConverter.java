@@ -8,6 +8,10 @@ import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConv
 import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticationConverter;
 import org.springframework.util.StringUtils;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -68,6 +72,31 @@ public class CustomerAccessTokenConverter extends DefaultAccessTokenConverter {
 			return response;
 		}
 
+	}
+
+	/**
+	 * 测试token 转 MD5
+	 *
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// token信息转MD5值
+		testTokenToMd5();
+	}
+
+	private static void testTokenToMd5() {
+		MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+		}
+		catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException("MD5 algorithm not available.  Fatal (should be in the JDK).");
+		}
+
+		String enStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzg5NzgzMDAsInVzZXJfbmFtZSI6ImFkbWluIiwi5YWs5Y-4Ijoi5byg5rW35rabIiwianRpIjoiNTY2MDQyYjktODFlMC00MGEwLThhNDQtZmU2NmU3NmUyZGQ0IiwiY2xpZW50X2lkIjoiZm9vQ2xpZW50SWRQYXNzd29yZCIsInNjb3BlIjpbImZvbyIsInJlYWQiLCJ3cml0ZSJdfQ.A7madYf1pTzZUfQe68yS346aKesjXfhql9zHEl1jyrg";
+		byte[] bytes = digest.digest(enStr.getBytes(StandardCharsets.UTF_8));
+		String id = String.format("%032x", new BigInteger(1, bytes));
+		System.out.println(id);;
 	}
 
 }
