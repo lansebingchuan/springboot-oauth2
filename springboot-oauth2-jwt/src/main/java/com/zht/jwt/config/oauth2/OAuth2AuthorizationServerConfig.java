@@ -40,7 +40,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager);
         endpoints.tokenStore(tokenStore());
-        endpoints.tokenEnhancer(customerEnhancer());
+        endpoints.tokenEnhancer(accessTokenConverter());
 
         DefaultTokenServices tokenServices = (DefaultTokenServices) endpoints.getDefaultAuthorizationServerTokenServices();
         // 不刷新token
@@ -98,18 +98,11 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 
     @Bean
     public TokenEnhancer accessTokenConverter() {
-        final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         // 定义key
         converter.setSigningKey("123");
         converter.setSigner(new MacSigner(new byte[1]));
-//		String stringKey = "dev" + "123";
-//		byte[] encodedKey = base64UrlCodec.decode(stringKey);
-//		converter.setSigner(new MacSigner(encodedKey));
-
-
-        // converter.setSigningKey("123");
-//    final KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource("mytest.jks"), "mypass".toCharArray());
-//    converter.setKeyPair(keyStoreKeyFactory.getKeyPair("mytest"));
+        converter.setAccessTokenConverter(new CustomerAccessTokenConverter());
         return converter;
     }
 

@@ -1,18 +1,9 @@
 package com.zht.jwt.config.oauth2;
 
-import com.zht.config.oauth2.CustomerAccessTokenConverter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 /**
  * 自定义资源服务器配置
@@ -32,33 +23,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
      */
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .and().authorizeRequests().anyRequest().permitAll();
-    }
-
-    @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.tokenServices(tokenServices());
-    }
-
-    @Bean
-    public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
-    }
-
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
-        tokenConverter.setVerifierKey("123456");
-        tokenConverter.setAccessTokenConverter(new CustomerAccessTokenConverter());
-        return tokenConverter;
-    }
-
-    @Bean
-    @Primary
-    public DefaultTokenServices tokenServices() {
-        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setTokenStore(tokenStore());
-        return defaultTokenServices;
+        /**
+         * antMatcher("/api/**") ： oauth2.0 只对匹配这个路径下面的 路径 进行认证
+         * antMatcher("/**") ： oauth2.0 对所有 路径 进行认证
+         * antMatchers("/api/v1/**").permitAll() ： oauth2.0 对路径 /api/v1/** 下面的 所有进行放行
+         */
+        http.antMatcher("/api/**").authorizeRequests() //请求都需要 oauth2.0认证检测
+                .antMatchers("/api/v1/**").permitAll() // 不需要认证的路径
+                .anyRequest().authenticated();  // 所有请求都需要 oauth2.0认证检测
     }
 }

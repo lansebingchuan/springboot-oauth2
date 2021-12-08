@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.provider.token.DefaultUserAuthenticat
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -51,6 +52,20 @@ public class CustomerAccessTokenConverter extends DefaultAccessTokenConverter {
 					throw new IllegalArgumentException("Authorities must be either a String or a Collection");
 				}
 			}
+		}
+
+		/**
+		 * 附加的属性到 token 信息当中
+		 *
+		 * @param authentication
+		 * @return
+		 */
+		@Override
+		public Map<String, ?> convertUserAuthentication(Authentication authentication) {
+			Map<String, Object> response = new LinkedHashMap<String, Object>();
+			response.put(USERNAME, authentication.getName());
+			response.put("公司", "张海涛");
+			return response;
 		}
 
 	}
