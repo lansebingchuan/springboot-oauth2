@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
@@ -43,19 +44,27 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         endpoints.tokenEnhancer(accessTokenConverter());
 
         DefaultTokenServices tokenServices = (DefaultTokenServices) endpoints.getDefaultAuthorizationServerTokenServices();
-        // 不刷新token
-        tokenServices.setSupportRefreshToken(false);
+        // 支持刷新token
+        tokenServices.setSupportRefreshToken(true);
         // 1天
         tokenServices.setAccessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(1));
         // 设置生成token时的客户端从数据库查找，，设置的时候代理为自己，及设置为下面配置的：clients.jdbc(dataSource);
         tokenServices.setClientDetailsService(endpoints.getClientDetailsService());
+        // 令牌默认有效期2小时
+        tokenServices.setAccessTokenValiditySeconds(7200);
+        // 刷新令牌默认有效期3天
+        tokenServices.setRefreshTokenValiditySeconds(259200);
         endpoints.tokenServices(tokenServices);
+        // 只允许post提交方式
+        endpoints.allowedTokenEndpointRequestMethods(HttpMethod.POST);
         super.configure(endpoints);
     }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security.tokenKeyAccess("permitAll()");
         security.checkTokenAccess("permitAll()");
+        // 允许表单登录
         security.allowFormAuthenticationForClients();
     }
 
