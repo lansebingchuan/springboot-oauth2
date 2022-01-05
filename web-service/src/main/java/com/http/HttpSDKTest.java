@@ -3,7 +3,9 @@ package com.http;
 import com.alibaba.csb.sdk.HttpCaller;
 import com.alibaba.csb.sdk.HttpCallerException;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.axis.utils.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,10 +27,10 @@ public class HttpSDKTest {
         if(httpUrl == null || reqMethod == null || params == null){
             return null;
         }
-        String API_NAME = "VisitorDataQueryService";
-        String ak = "b9913276298642dea70515f18741d616";
-        String sk = "E2Xh6ZiV9I5h1BjN/C/ExY+ohNM=";
-        String result = null;
+        String API_NAME = "QueryService";
+        String ak = "ak";
+        String sk = "sk";
+        String result = "";
 
         System.out.println("testJson request url: " + httpUrl);
         System.out.println("reqMethod: " + reqMethod);
@@ -38,14 +40,15 @@ public class HttpSDKTest {
         System.out.println("version: " + version);
 
         try {
-            if("get".equals(reqMethod.toLowerCase())){
+            if("get".equalsIgnoreCase(reqMethod)){
                 result = HttpCaller.doGet(httpUrl, API_NAME, version, params, ak, sk);
-            }else if("post".equals(reqMethod.toLowerCase())){
+            }else if("post".equalsIgnoreCase(reqMethod)){
                 result = HttpCaller.doPost(httpUrl, API_NAME, version, params, ak, sk);
             }
 
-            if (result != null) {
+            if (!StringUtils.isEmpty(result)) {
                 // 返回结果处理, 如转换为JSON对象
+                result = new String(result.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             }
         } catch (HttpCallerException e) {
             // 调用异常处理
@@ -55,7 +58,7 @@ public class HttpSDKTest {
     }
 
     public static void main(String[] args) {
-        String httpUrl = "https://api-csb-broker.boe.com.cn:8086/test";
+        String httpUrl = "网络地址";
         // UAT
         String reqMethod = "POST";
         String version = "1.0.0";
@@ -67,15 +70,13 @@ public class HttpSDKTest {
         jsonObject2.put("endTime", "2021-12-12 23:00:00");
         jsonObject1.put("header", jsonObject2);
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("startFKYYWebservice", jsonObject1.toString());
 
         try {
             String res1 = request(httpUrl, reqMethod, params, version);
-            String res = new String(res1.getBytes("ISO-8859-1"), "UTF-8");
-            System.out.println("返回结果："+res);
+            System.out.println("返回结果：" + res1);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

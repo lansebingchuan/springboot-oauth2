@@ -22,7 +22,7 @@ public class WSOSFWebserviceFacadeSrvProxyServiceLocator extends org.apache.axis
     }
 
     // Use to get a proxy class for WSOSFWebserviceFacade
-    private String WSOSFWebserviceFacade_address = "https://cqqn.kdeascloud.com/ormrpc/services/WSOSFWebserviceFacade";
+    private String WSOSFWebserviceFacade_address = "";
 
     public String getWSOSFWebserviceFacadeAddress() {
         return WSOSFWebserviceFacade_address;
@@ -105,7 +105,7 @@ public class WSOSFWebserviceFacadeSrvProxyServiceLocator extends org.apache.axis
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("https://cqqn.kdeascloud.com/ormrpc/services/WSOSFWebserviceFacade", "WSOSFWebserviceFacadeSrvProxyService");
+        return new javax.xml.namespace.QName("", "WSOSFWebserviceFacadeSrvProxyService");
     }
 
     private java.util.HashSet ports = null;
@@ -113,7 +113,7 @@ public class WSOSFWebserviceFacadeSrvProxyServiceLocator extends org.apache.axis
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("https://cqqn.kdeascloud.com/ormrpc/services/WSOSFWebserviceFacade", "WSOSFWebserviceFacade"));
+            ports.add(new javax.xml.namespace.QName("", "WSOSFWebserviceFacade"));
         }
         return ports.iterator();
     }
