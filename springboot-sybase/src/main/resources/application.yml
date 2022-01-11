@@ -1,5 +1,5 @@
 other:
-  url: jdbc:jtds:sybase://1.1.1.1:5000/cnooc_test;charset=cp936
+  url: jdbc:jtds:sybase://1.1.1.1:5000/FL_HIS;charset=cp936
 server:
   port: 8080
 spring:
@@ -10,7 +10,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: ${other.url}
     username: mz_interface
-    password: 123456
+    password: mz_interface
     druid:
       initial-size: 5
       max-active: 20
